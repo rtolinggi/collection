@@ -1,7 +1,9 @@
 import prisma from "../utils/db.js";
 import ErrorResponse from "../utils/errorRespons.js";
-import { Bcrypt, hashPassword } from "../utils/password.js";
+import { bcrypt, hashPassword } from "../utils/password.js";
 import { accessToken, refreshToken } from "../utils/token.js";
+import crypto from "crypto";
+import sendEmail from "../config/emailConfig.js";
 
 // Login Controller
 const login = async (req, res, next) => {
@@ -31,7 +33,7 @@ const login = async (req, res, next) => {
     );
 
   // validate password
-  if (user && !(await Bcrypt.compare(password, user.password))) {
+  if (user && !(await bcrypt.compare(password, user.password))) {
     return next(new ErrorResponse("Invalid Credential", 401));
   }
 
@@ -113,19 +115,45 @@ const register = async (req, res, next) => {
     return next(new ErrorResponse());
   }
 
-  // Store Data Table User
+  //Store Data Table User
   const data = {
     username,
     email,
     password: await hashPassword(password),
   };
 
+  let user;
   try {
-    const user = await prisma.user.create({ data });
-    return res.status(200).json({ success: true, user });
+    user = await prisma.user.create({ data });
   } catch (error) {
     return next(new ErrorResponse(error?.message));
   }
+
+  // Create Token For email verified
+  if (user) {
+    const token = crypto.randomBytes(32).toString("hex");
+    const url = `${process.env.BASE_URL}api/auth/${user.id}/verify/${token}`;
+    let storeTokenEmail;
+    try {
+      storeTokenEmail = await prisma.verifiedEmail.create({
+        data: {
+          userId: user.id,
+          token,
+        },
+      });
+    } catch (error) {
+      return next(new ErrorResponse());
+    }
+    sendEmail(
+      user.email,
+      "Verify email",
+      `<h3>Please Click Link Bottom to Verify youre Email</h3>
+      <p>${url}<p>`
+    );
+  }
+
+  // Finally Store Data User Register
+  return res.status(200).json({ success: true, user });
 };
 
 // logout
@@ -175,4 +203,40 @@ const logout = async (req, res, next) => {
     .json({ success: true, message: "Logout Successfully" });
 };
 
-export { login, register, logout };
+// verify email
+const verifyEmail = async (req, res, next) => {
+  const { id, token } = req.params;
+
+  // validate link email verified
+  if (!id || !token) return next(ErrorResponse("Invalid link verified email"));
+
+  // update status email is verified
+  try {
+    await prisma.user.update({
+      where: {
+        id,
+      },
+      data: {
+        isVerified: true,
+      },
+    });
+  } catch (error) {
+    return next(new ErrorResponse(error.message, 500));
+  }
+
+  // delete token email verified
+  try {
+    await prisma.verifiedEmail.delete({
+      where: {
+        userId: id,
+      },
+    });
+  } catch (error) {
+    return next(new ErrorResponse());
+  }
+
+  // Success Verified email and redirect to login Page
+  return res.redirect("http://localhost:3000");
+};
+
+export { login, register, logout, verifyEmail };

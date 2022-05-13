@@ -1,11 +1,10 @@
 import bcrypt from "bcryptjs";
-import { PrismaClient } from "@prisma/client";
-import jsonwebtoken from "jsonwebtoken";
-
-const prisma = new PrismaClient();
+import prisma from "../utils/db.js";
+import { errorHandler } from "../utils/errorMiddleware.js";
 
 // Login Controller
-const login = async (req, res) => {
+const login = async (req, res, next) => {
+  console.log("ini login route");
   const { email, password } = req.body;
   const newPassword = "password";
   const salt = await bcrypt.genSalt(10);
@@ -13,13 +12,11 @@ const login = async (req, res) => {
   const hashPassword = await bcrypt.hash(password, salt);
 
   if (!email || !password) {
-    return res
-      .status(400)
-      .json({ success: false, msg: "All Field Is Required" });
+    next(errorHandler(401, "Password Not Match"));
   }
 
   if (oldPassword !== hashPassword) {
-    return res.status(400).json({ success: false, msg: "Invalid Credential" });
+    next(errorHandler(401, "Password Not Match"));
   }
 
   return res
@@ -28,28 +25,28 @@ const login = async (req, res) => {
 };
 
 // Register Controller
-
-const register = async (req, res) => {
+const register = async (req, res, next) => {
   const { username, email, password, password_confirmation } = req.body;
 
   if (!username || !email || !password || !password_confirmation) {
-    return res
-      .status(400)
-      .json({ success: false, msg: "All Field Is Required" });
+    next(errorHandler(400, "All Field Is Required"));
   }
 
   if (password !== password_confirmation) {
-    return res.status(400).json({ success: false, msg: "Password Not Match" });
+    next(errorHandler(401, "Password Not Macth"));
   }
 
-  const user = await prisma.user.findUnique({
-    where: {
-      email,
-    },
-  });
-
-  if (user) {
-    return res.status(400).json({ success: false, msg: "Email Already Exist" });
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+    if (user) {
+      next(errorHandler(401, "Email Already Exist"));
+    }
+  } catch (error) {
+    next(500, error.message);
   }
 
   const salt = await bcrypt.genSalt(10);
@@ -59,18 +56,15 @@ const register = async (req, res) => {
     username,
     email,
     password: hashPassword,
+    asd: "asd",
   };
 
-  const storeData = await prisma.user.create({ data });
-  console.log(storeData);
-
-  if (!storeData) {
-    return res
-      .status(500)
-      .json({ success: false, msg: "Internal Server Error" });
+  try {
+    const storeData = await prisma.user.create({ data });
+    return res.status(200).json({ success: true, data: storeData });
+  } catch (error) {
+    next(errorHandler(500, "Internal server error"));
   }
-
-  return res.status(200).json({ success: true, data });
 };
 
 export { login, register };

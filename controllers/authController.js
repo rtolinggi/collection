@@ -153,7 +153,7 @@ const logout = async (req, res, next) => {
 
   // Success Logout
   // 1. Clear Cookie
-  res.clearCookie(refresh_token);
+  res.clearCookie("refresh_token");
 
   // 2. Update Refresh_token Set Null
   try {

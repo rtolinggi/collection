@@ -1,5 +1,5 @@
 const getUser = async (req, res) => {
-  return res.send("get Users");
+  return res.status(200).json({ success: true, user: req.user });
 };
 const storeUser = async (req, res) => {
   return res.send("store Users");

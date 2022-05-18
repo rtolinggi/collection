@@ -1,6 +1,7 @@
 import prisma from "../utils/db.js";
 import ErrorResponse from "../utils/errorRespons.js";
 import { bcrypt, hashPassword } from "../utils/password.js";
+import jwt from "jsonwebtoken";
 import { accessToken, refreshToken } from "../utils/token.js";
 import crypto from "crypto";
 import sendEmail from "../config/emailConfig.js";
@@ -239,4 +240,76 @@ const verifyEmail = async (req, res, next) => {
   return res.redirect("http://localhost:3000");
 };
 
-export { login, register, logout, verifyEmail };
+const session = async (req, res, next) => {
+  const refreshToken = req.cookies.refresh_token;
+  //cek cookies in headers request
+  if (!refreshToken || refreshToken === undefined) {
+    return res.status(401).json({ isLogin: false });
+  }
+  // validation token in database
+  let user;
+  try {
+    user = prisma.user.findFirst({
+      where: {
+        refreshToken,
+      },
+    });
+  } catch (error) {
+    return next(new ErrorResponse());
+  }
+  if (!user) {
+    res.status(401).json({ isLogin: false });
+  }
+
+  //Validation TOken
+  jwt.verify(
+    refreshToken,
+    process.env.JWT_REFRESH_TOKEN_SECRET,
+    (err, decoded) => {
+      if (err) {
+        return next(new ErrorResponse("Token Not Valid", 401));
+      }
+      return res.status(200).json({ isLogin: true, decoded });
+    }
+  );
+};
+
+// get token
+const getToken = async (req, res, next) => {
+  const refreshToken = req.cookies.refresh_token;
+  //cek cookies in headers request
+  if (!refreshToken || refreshToken === undefined) {
+    return next(
+      new ErrorResponse("Token Not Found Please Login To get Token", 401)
+    );
+  }
+  // validation token in database
+  let user;
+  try {
+    user = prisma.user.findFirst({
+      where: {
+        refreshToken,
+      },
+    });
+  } catch (error) {
+    return next(new ErrorResponse());
+  }
+  if (!user) {
+    return next(new ErrorResponse("Token Not Found", 401));
+  }
+
+  //Send Acces Token
+  jwt.verify(
+    refreshToken,
+    process.env.JWT_REFRESH_TOKEN_SECRET,
+    (err, decoded) => {
+      if (err) {
+        return next(new ErrorResponse("Token Not Valid", 401));
+      }
+      const token = accessToken(decoded.id);
+      return res.status(200).json({ success: true, token });
+    }
+  );
+};
+
+export { login, register, logout, verifyEmail, session, getToken };

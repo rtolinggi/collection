@@ -5,6 +5,7 @@ import errorHandler from "./middlewares/errorMiddleware.js";
 import authRoute from "./routers/authRouter.js";
 import userRoute from "./routers/userRouter.js";
 import cors from "cors";
+import protect from "./middlewares/authMiddleware.js";
 
 const whiteList = ["http://localhost:3000"];
 const corsOptions = {
@@ -22,14 +23,14 @@ const corsOptions = {
 const app = express();
 const port = process.env.POR || 5000;
 
-app.use(cors(corsOptions()));
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 // Route
 app.use("/api/auth", authRoute);
-app.use("/api/user", userRoute);
+app.use("/api/user", protect, userRoute);
 
 // error Handler middleware
 app.use(errorHandler);

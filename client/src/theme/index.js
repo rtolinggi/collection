@@ -1,5 +1,5 @@
 import { extendTheme } from "@chakra-ui/react";
-import { ButtonStyle as Button, InputStyle as Input } from "../components";
+import { ButtonStyle as Button, InputStyle as Input } from "./components";
 
 const theme = extendTheme({
   colors: {

@@ -1,4 +1,10 @@
 const InputStyle = {
+  baseStyle: {
+    _focus: {
+      ring: "10px",
+      ringColor: "ring",
+    },
+  },
   variants: {
     filled: {
       field: {

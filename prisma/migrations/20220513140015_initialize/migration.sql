@@ -34,6 +34,13 @@ CREATE TABLE "Profil" (
     CONSTRAINT "Profil_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "Verified_Email" (
+    "userId" TEXT NOT NULL,
+    "token" TEXT,
+    "expire" INTEGER NOT NULL DEFAULT 3600
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
@@ -43,5 +50,11 @@ CREATE UNIQUE INDEX "Profil_nik_key" ON "Profil"("nik");
 -- CreateIndex
 CREATE UNIQUE INDEX "Profil_userId_key" ON "Profil"("userId");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "Verified_Email_userId_key" ON "Verified_Email"("userId");
+
 -- AddForeignKey
 ALTER TABLE "Profil" ADD CONSTRAINT "Profil_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Verified_Email" ADD CONSTRAINT "Verified_Email_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

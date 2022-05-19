@@ -1,25 +1,36 @@
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import AdminLayout from "./layouts/AdminLayout";
+import AuthLayout from "./layouts/AuthLayout";
+import Dashboard from "./pages/admin/Dashboard";
+import { Login, Register } from "./pages/auth";
 
-function App() {
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <BrowserRouter>
+        <Routes>
+          {/* Public Route */}
+          <Route element={<AuthLayout />}>
+            <Route path="/" element={<Login />} />
+            <Route path="register" element={<Register />} />
+          </Route>
+
+          {/* Private Route */}
+          <Route element={<AdminLayout />}>
+            <Route path="/admin/dashboard" element={<Dashboard />} />
+          </Route>
+          <Route
+            path="*"
+            element={
+              <>
+                <h1>404 Not Found</h1>
+              </>
+            }
+          />
+        </Routes>
+      </BrowserRouter>
+    </>
   );
-}
+};
 
 export default App;

@@ -1,76 +1,315 @@
-import bcrypt from "bcryptjs";
-import { PrismaClient } from "@prisma/client";
-import jsonwebtoken from "jsonwebtoken";
-
-const prisma = new PrismaClient();
+import prisma from "../utils/db.js";
+import ErrorResponse from "../utils/errorRespons.js";
+import { bcrypt, hashPassword } from "../utils/password.js";
+import jwt from "jsonwebtoken";
+import { accessToken, refreshToken } from "../utils/token.js";
+import crypto from "crypto";
+import sendEmail from "../config/emailConfig.js";
 
 // Login Controller
-const login = async (req, res) => {
+const login = async (req, res, next) => {
   const { email, password } = req.body;
-  const newPassword = "password";
-  const salt = await bcrypt.genSalt(10);
-  const oldPassword = await bcrypt.hash(newPassword, salt);
-  const hashPassword = await bcrypt.hash(password, salt);
 
+  // validate input user
   if (!email || !password) {
-    return res
-      .status(400)
-      .json({ success: false, msg: "All Field Is Required" });
+    return next(new ErrorResponse("All FIeld Is Required", 400));
   }
 
-  if (oldPassword !== hashPassword) {
-    return res.status(400).json({ success: false, msg: "Invalid Credential" });
+  // getUser by Email
+  let user;
+  try {
+    user = await prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+  } catch (error) {
+    return next(new ErrorResponse());
   }
 
-  return res
-    .status(200)
-    .json({ success: true, data: { ...req.body, oldPassword } });
+  // validate email
+  if (!user)
+    return next(
+      new ErrorResponse("Email Not Found Please Register to Login", 401)
+    );
+
+  // validate password
+  if (user && !(await bcrypt.compare(password, user.password))) {
+    return next(new ErrorResponse("Invalid Credential", 401));
+  }
+
+  // validate isVerified User
+  const isVerifiedEmail = JSON.parse(process.env.EMAIL_VERIFIED_LOGIN);
+  if (isVerifiedEmail && !user.isVerified)
+    return next(
+      new ErrorResponse(
+        "Please Verified Your Email To Before Access Login",
+        401
+      )
+    );
+
+  // Success Login
+
+  // 1. Create Refersh Token
+  const refresh_token = refreshToken(user.id);
+  const access_token = accessToken(user.id);
+
+  // 2. Update Field RefreshToken in database user
+  try {
+    await prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        refreshToken: refresh_token,
+      },
+    });
+  } catch (error) {
+    return next(new ErrorResponse());
+  }
+
+  //  3. send response token and cookie on client
+  res.cookie("refresh_token", refresh_token, {
+    httpOnly: true,
+    maxAge: 30 * 24 * 60 * 60 * 1000,
+  });
+
+  res.json({
+    success: true,
+    user: {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+    },
+    access_token,
+    refresh_token,
+  });
+
+  return res.status(200);
 };
 
 // Register Controller
-
-const register = async (req, res) => {
+const register = async (req, res, next) => {
   const { username, email, password, password_confirmation } = req.body;
 
+  // validasi input user
   if (!username || !email || !password || !password_confirmation) {
-    return res
-      .status(400)
-      .json({ success: false, msg: "All Field Is Required" });
+    return next(new ErrorResponse("All field Is Required", 400));
   }
 
+  //validasi password confirmation
   if (password !== password_confirmation) {
-    return res.status(400).json({ success: false, msg: "Password Not Match" });
+    return next(new ErrorResponse("Password Not Match", 400));
   }
 
-  const user = await prisma.user.findUnique({
-    where: {
-      email,
-    },
-  });
-
-  if (user) {
-    return res.status(400).json({ success: false, msg: "Email Already Exist" });
+  // validasi email exist
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+    if (user) {
+      return next(new ErrorResponse("Email Already Exist", 400));
+    }
+  } catch (error) {
+    return next(new ErrorResponse());
   }
 
-  const salt = await bcrypt.genSalt(10);
-  const hashPassword = await bcrypt.hash(password, salt);
-
+  //Store Data Table User
   const data = {
     username,
     email,
-    password: hashPassword,
+    password: await hashPassword(password),
   };
 
-  const storeData = await prisma.user.create({ data });
-  console.log(storeData);
-
-  if (!storeData) {
-    return res
-      .status(500)
-      .json({ success: false, msg: "Internal Server Error" });
+  let user;
+  try {
+    user = await prisma.user.create({ data });
+  } catch (error) {
+    return next(new ErrorResponse(error?.message));
   }
 
-  return res.status(200).json({ success: true, data });
+  // Create Token For email verified
+  if (user) {
+    const token = crypto.randomBytes(32).toString("hex");
+    const url = `${process.env.BASE_URL}api/auth/${user.id}/verify/${token}`;
+    let storeTokenEmail;
+    try {
+      storeTokenEmail = await prisma.verifiedEmail.create({
+        data: {
+          userId: user.id,
+          token,
+        },
+      });
+    } catch (error) {
+      return next(new ErrorResponse());
+    }
+    sendEmail(
+      user.email,
+      "Verify email",
+      `<h3>Please Click Link Bottom to Verify youre Email</h3>
+      <p>${url}<p>`
+    );
+  }
+
+  // Finally Store Data User Register
+  return res.status(200).json({ success: true, user });
 };
 
-export { login, register };
+// logout
+const logout = async (req, res, next) => {
+  const refresh_token = req.cookies.refresh_token;
+
+  // validate refresh_token
+  if (!refresh_token)
+    return next(new ErrorResponse("Youre Status Not Login", 401));
+
+  // update refresh_token to null
+  let user;
+  try {
+    user = await prisma.user.findFirst({
+      where: {
+        refreshToken: refresh_token,
+      },
+    });
+  } catch (error) {
+    return next(new ErrorResponse());
+  }
+
+  //  validate Token in cookies
+  if (!user) return next(new ErrorResponse("Token Not Valid", 401));
+
+  // Success Logout
+  // 1. Clear Cookie
+  res.clearCookie("refresh_token");
+
+  // 2. Update Refresh_token Set Null
+  try {
+    await prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        refreshToken: null,
+      },
+    });
+  } catch (error) {
+    return next(new ErrorResponse(error.message, 501));
+  }
+
+  // 3. Response Status
+  return res
+    .status(200)
+    .json({ success: true, message: "Logout Successfully" });
+};
+
+// verify email
+const verifyEmail = async (req, res, next) => {
+  const { id, token } = req.params;
+
+  // validate link email verified
+  if (!id || !token) return next(ErrorResponse("Invalid link verified email"));
+
+  // update status email is verified
+  try {
+    await prisma.user.update({
+      where: {
+        id,
+      },
+      data: {
+        isVerified: true,
+      },
+    });
+  } catch (error) {
+    return next(new ErrorResponse(error.message, 500));
+  }
+
+  // delete token email verified
+  try {
+    await prisma.verifiedEmail.delete({
+      where: {
+        userId: id,
+      },
+    });
+  } catch (error) {
+    return next(new ErrorResponse());
+  }
+
+  // Success Verified email and redirect to login Page
+  return res.redirect("http://localhost:3000");
+};
+
+const session = async (req, res, next) => {
+  const refreshToken = req.cookies.refresh_token;
+  //cek cookies in headers request
+  if (!refreshToken || refreshToken === undefined) {
+    return res.status(401).json({ isLogin: false });
+  }
+  // validation token in database
+  let user;
+  try {
+    user = prisma.user.findFirst({
+      where: {
+        refreshToken,
+      },
+    });
+  } catch (error) {
+    return next(new ErrorResponse());
+  }
+  if (!user) {
+    res.status(401).json({ isLogin: false });
+  }
+
+  //Validation TOken
+  jwt.verify(
+    refreshToken,
+    process.env.JWT_REFRESH_TOKEN_SECRET,
+    (err, decoded) => {
+      if (err) {
+        return next(new ErrorResponse("Token Not Valid", 401));
+      }
+      return res.status(200).json({ isLogin: true, decoded });
+    }
+  );
+};
+
+// get token
+const getToken = async (req, res, next) => {
+  const refreshToken = req.cookies.refresh_token;
+  //cek cookies in headers request
+  if (!refreshToken || refreshToken === undefined) {
+    return next(
+      new ErrorResponse("Token Not Found Please Login To get Token", 401)
+    );
+  }
+  // validation token in database
+  let user;
+  try {
+    user = prisma.user.findFirst({
+      where: {
+        refreshToken,
+      },
+    });
+  } catch (error) {
+    return next(new ErrorResponse());
+  }
+  if (!user) {
+    return next(new ErrorResponse("Token Not Found", 401));
+  }
+
+  //Send Acces Token
+  jwt.verify(
+    refreshToken,
+    process.env.JWT_REFRESH_TOKEN_SECRET,
+    (err, decoded) => {
+      if (err) {
+        return next(new ErrorResponse("Token Not Valid", 401));
+      }
+      const token = accessToken(decoded.id);
+      return res.status(200).json({ success: true, token });
+    }
+  );
+};
+
+export { login, register, logout, verifyEmail, session, getToken };

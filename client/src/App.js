@@ -11,16 +11,16 @@ const App = () => {
         <Routes>
           {/* Public Route */}
           <Route element={<AuthLayout />}>
-            <Route path="/" element={<Login />} />
-            <Route path="register" element={<Register />} />
+            <Route path='/' element={<Login />} />
+            <Route path='register' element={<Register />} />
           </Route>
 
           {/* Private Route */}
           <Route element={<AdminLayout />}>
-            <Route path="/admin/dashboard" element={<Dashboard />} />
+            <Route path='/admin/dashboard' element={<Dashboard />} />
           </Route>
           <Route
-            path="*"
+            path='*'
             element={
               <>
                 <h1>404 Not Found</h1>

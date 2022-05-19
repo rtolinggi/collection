@@ -4,10 +4,10 @@ import { ButtonStyle as Button, InputStyle as Input } from "./components";
 const theme = extendTheme({
   colors: {
     primary: {
-      500: "#3BACB6",
-      600: "#2F8F9D",
+      500: "#1a7093",
+      600: "#03506f",
     },
-    ring: "#82DBD8",
+    ring: "#a2d4e8",
   },
   components: {
     Input,

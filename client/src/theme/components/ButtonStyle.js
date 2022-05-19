@@ -22,7 +22,7 @@ const ButtonStyle = {
   },
   defaultProps: {
     variant: "primary",
-    w: "fit-content",
+    w: "full",
   },
 };
 

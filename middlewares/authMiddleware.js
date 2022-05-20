@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import prisma from "../utils/db.js";
 import ErrorResponse from "../utils/errorRespons.js";
+import constant from "../constants/index.js";
 
 const protect = async (req, res, next) => {
   let token;
@@ -8,11 +9,10 @@ const protect = async (req, res, next) => {
   if (reqHeader && reqHeader.startsWith("Bearer")) {
     //Get Token From Header
     token = reqHeader.split(" ")[1];
-    console.log("ini token :", token);
     //Verify Token
     const id = jwt.verify(
       token,
-      process.env.JWT_ACCESS_TOKEN_SECRET,
+      constant.JWT_SECRET_ACCESS_TOKEN,
       (err, decoded) => {
         if (err) {
           return next(new ErrorResponse("Token Not Valid", 401));

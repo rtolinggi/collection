@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 import { accessToken, refreshToken } from "../utils/token.js";
 import crypto from "crypto";
 import sendEmail from "../config/emailConfig.js";
+import constant from "../constants/index.js";
 
 // Login Controller
 const login = async (req, res, next) => {
@@ -39,7 +40,7 @@ const login = async (req, res, next) => {
   }
 
   // validate isVerified User
-  const isVerifiedEmail = JSON.parse(process.env.EMAIL_VERIFIED_LOGIN);
+  const isVerifiedEmail = JSON.parse(constant.EMAIL_VERIFIED_USER);
   if (isVerifiedEmail && !user.isVerified)
     return next(
       new ErrorResponse(
@@ -133,7 +134,7 @@ const register = async (req, res, next) => {
   // Create Token For email verified
   if (user) {
     const token = crypto.randomBytes(32).toString("hex");
-    const url = `${process.env.BASE_URL}api/auth/${user.id}/verify/${token}`;
+    const url = `${constant.BASE_URL}api/auth/${user.id}/verify/${token}`;
     let storeTokenEmail;
     try {
       storeTokenEmail = await prisma.verifiedEmail.create({
@@ -264,7 +265,7 @@ const session = async (req, res, next) => {
   //Validation TOken
   jwt.verify(
     refreshToken,
-    process.env.JWT_REFRESH_TOKEN_SECRET,
+    constant.JWT_SECRET_REFRESH_TOKEN,
     (err, decoded) => {
       if (err) {
         return next(new ErrorResponse("Token Not Valid", 401));
@@ -298,10 +299,10 @@ const getToken = async (req, res, next) => {
     return next(new ErrorResponse("Token Not Found", 401));
   }
 
-  //Send Acces Token
+  //Send Access Token
   jwt.verify(
     refreshToken,
-    process.env.JWT_REFRESH_TOKEN_SECRET,
+    constant.JWT_SECRET_REFRESH_TOKEN,
     (err, decoded) => {
       if (err) {
         return next(new ErrorResponse("Token Not Valid", 401));

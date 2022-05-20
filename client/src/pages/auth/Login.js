@@ -39,7 +39,7 @@ const Login = () => {
               fontWeight: "bolder",
             }}
           />
-          <Heading as='h1' size='md' color='#03506f'>
+          <Heading as='h1' color='#03506f'>
             Login
           </Heading>
         </HStack>
@@ -48,47 +48,35 @@ const Login = () => {
         <Stack spacing={6}>
           <Stack spacing={2}>
             <FormControl>
-              <FormLabel htmlFor='email' fontSize='sm'>
-                Email address
-              </FormLabel>
-              <Input id='email' type='email' size='md' />
+              <FormLabel htmlFor='email'>Email address</FormLabel>
+              <Input id='email' type='email' />
               {/* <FormHelperText>We'll never share your email.</FormHelperText> */}
             </FormControl>
             <FormControl>
-              <FormLabel htmlFor='password' fontSize='sm'>
-                Password
-              </FormLabel>
-              <Input id='password' type='password' size='md' />
+              <FormLabel htmlFor='password'>Password</FormLabel>
+              <Input id='password' type='password' />
               {/* <FormHelperText>We'll never share your email.</FormHelperText> */}
             </FormControl>
           </Stack>
           <Flex justifyContent='space-between' alignItems='center'>
-            <Checkbox size='md' colorScheme='primary' color='gray.600'>
-              <Text fontSize='sm'>Remember Me</Text>
+            <Checkbox size='md' colorScheme='primary'>
+              <Text>Remember Me</Text>
             </Checkbox>
-            <Text
-              as={NavLink}
-              to='/forgotPassword'
-              fontSize='sm'
-              color='gray.600'>
+            <Text as={NavLink} to='/forgotPassword'>
               Forgot Password?
             </Text>
           </Flex>
-          <Button w='fit-content' size='md'>
-            Login
-          </Button>
+          <Button w='fit-content'>Login</Button>
         </Stack>
         <Divider my={4} />
         <Stack align='center'>
           <Text
             as={NavLink}
             to='/register'
-            fontSize='sm'
             fontWeight='semibold'
-            color='gray.600'
             textDecoration='none'>
             Dont have an Account ?{" "}
-            <Text as='span' fontWeight='bold' fontSize='sm' color='primary.600'>
+            <Text as='span' fontWeight='bold'>
               Register
             </Text>
           </Text>

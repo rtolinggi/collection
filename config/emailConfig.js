@@ -1,18 +1,19 @@
 import nodemailer from "nodemailer";
+import constant from "../constants/index.js";
 
 const sendEmail = async (email, subject, html) => {
   try {
     const transporter = nodemailer.createTransport({
-      host: process.env.EMAIL_HOST,
-      port: process.env.EMAIL_PORT,
-      secure: process.env.EMAIL_SECURE,
+      host: constant.EMAIL_HOST,
+      port: constant.EMAIL_PORT,
+      secure: constant.EMAIL_SECURE,
       auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASSWORD,
+        user: constant.EMAIL_USER,
+        pass: constant.EMAIL_PASSWORD,
       },
     });
     await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+      from: constant.EMAIL_USER,
       to: email,
       subject: subject,
       html: html,

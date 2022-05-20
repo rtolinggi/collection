@@ -158,7 +158,7 @@ const register = async (req, res, next) => {
   return res.status(200).json({ success: true, user });
 };
 
-// logout
+// logout Controller
 const logout = async (req, res, next) => {
   const refresh_token = req.cookies.refresh_token;
 
@@ -205,7 +205,7 @@ const logout = async (req, res, next) => {
     .json({ success: true, message: "Logout Successfully" });
 };
 
-// verify email
+// verify email Controller
 const verifyEmail = async (req, res, next) => {
   const { id, token } = req.params;
 
@@ -275,7 +275,7 @@ const session = async (req, res, next) => {
   );
 };
 
-// get token
+// get token Controller
 const getToken = async (req, res, next) => {
   const refreshToken = req.cookies.refresh_token;
   //cek cookies in headers request

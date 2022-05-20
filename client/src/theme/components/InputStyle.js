@@ -1,14 +1,8 @@
 const InputStyle = {
-  baseStyle: {
-    _focus: {
-      ring: "10px",
-      ringColor: "ring",
-    },
-  },
   variants: {
     filled: {
       field: {
-        borderRadius: "md",
+        borderRadius: "sm",
         _focus: {
           borderWidth: "1.2px",
           boxShadow: "md",
@@ -17,7 +11,7 @@ const InputStyle = {
     },
   },
   defaultProps: {
-    size: "md",
+    size: "sm",
     focusBorderColor: "primary.500",
     variant: "filled",
   },

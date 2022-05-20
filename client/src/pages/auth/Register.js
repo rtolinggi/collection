@@ -1,70 +1,142 @@
 import React from "react";
 import {
   Button,
-  Checkbox,
   Container,
   Divider,
-  Flex,
   FormControl,
   FormLabel,
+  Heading,
+  HStack,
   Input,
-  Link,
+  InputGroup,
+  InputLeftElement,
   Stack,
   Text,
 } from "@chakra-ui/react";
+import { BiAtom } from "react-icons/bi";
+import {
+  RiMailLine,
+  RiLock2Line,
+  RiUser3Line,
+  RiUserAddLine,
+} from "react-icons/ri";
 import { NavLink } from "react-router-dom";
+import AuthLayout from "../../layouts/AuthLayout";
 
 const Register = () => {
   return (
-    <Flex
-      justify='center'
-      alignItems='center'
-      minH='100vh'
-      w='full'
-      bgGradient='radial(circle, rgba(97,208,252,1) 0%, rgba(26,112,147,1) 35%, rgba(3,80,111,1) 100%)'>
-      <Container maxW='sm' bg='white' borderRadius='lg' p={6} boxShadow='lg'>
+    <AuthLayout>
+      <Container
+        as='main'
+        maxW='sm'
+        bg='white'
+        borderRadius='lg'
+        p={6}
+        boxShadow='dark-lg'>
+        <HStack>
+          <BiAtom
+            style={{
+              fontSize: "1.8rem",
+              color: "#03506f",
+              fontWeight: "bolder",
+            }}
+          />
+          <Heading size='md' as='h1' color='#03506f'>
+            Register
+          </Heading>
+        </HStack>
+
         <Divider my={4} />
         <Stack spacing={6}>
-          <Stack spacing={4}>
+          <Stack spacing={2}>
             <FormControl>
               <FormLabel htmlFor='username' fontSize='sm'>
-                Username
+                Full Name
               </FormLabel>
-              <Input id='username' type='text' />
+              <InputGroup>
+                <InputLeftElement
+                  pointerEvents='none'
+                  color='primary.600'
+                  fontSize='md'
+                  children={<RiUser3Line />}
+                />
+                <Input id='username' type='text' placeholder='Full Name' />
+              </InputGroup>
               {/* <FormHelperText>We'll never share your email.</FormHelperText> */}
             </FormControl>
             <FormControl>
               <FormLabel htmlFor='email' fontSize='sm'>
                 Email address
               </FormLabel>
-              <Input id='email' type='email' />
+              <InputGroup>
+                <InputLeftElement
+                  pointerEvents='none'
+                  color='primary.600'
+                  fontSize='md'
+                  children={<RiMailLine />}
+                />
+                <Input id='email' type='email' placeholder='Email' />
+              </InputGroup>
               {/* <FormHelperText>We'll never share your email.</FormHelperText> */}
             </FormControl>
             <FormControl>
               <FormLabel htmlFor='password' fontSize='sm'>
                 Password
               </FormLabel>
-              <Input id='password' type='password' />
+              <InputGroup>
+                <InputLeftElement
+                  pointerEvents='none'
+                  color='primary.600'
+                  fontSize='md'
+                  children={<RiLock2Line />}
+                />
+                <Input id='password' type='password' placeholder='Password' />
+              </InputGroup>
+              {/* <FormHelperText>We'll never share your email.</FormHelperText> */}
+            </FormControl>
+            <FormControl>
+              <FormLabel htmlFor='repeatPassword' fontSize='sm'>
+                Repeat Password
+              </FormLabel>
+              <InputGroup>
+                <InputLeftElement
+                  pointerEvents='none'
+                  color='primary.600'
+                  fontSize='md'
+                  children={<RiLock2Line />}
+                />
+                <Input
+                  id='repeatPassword'
+                  type='password'
+                  placeholder='Repeat Password'
+                />
+              </InputGroup>
               {/* <FormHelperText>We'll never share your email.</FormHelperText> */}
             </FormControl>
           </Stack>
-          <Flex justifyContent='space-between' alignItems='center'>
-            <Checkbox size='md' colorScheme='primary' color='gray.600'>
-              <Text fontSize='sm'>Remember Me</Text>
-            </Checkbox>
-            <Link
-              as={NavLink}
-              to='/forgotPassword'
-              fontSize='sm'
-              color='gray.600'>
-              Forgot Password?
-            </Link>
-          </Flex>
-          <Button w='fit-content'>Simpan</Button>
+          <Button
+            w={["full", "fit-content"]}
+            size='sm'
+            leftIcon={<RiUserAddLine />}>
+            Register
+          </Button>
         </Stack>
         <Divider my={4} />
+        <Stack align='center'>
+          <Text>
+            Do You have an Account ?{" "}
+            <Text
+              as={NavLink}
+              to='/login'
+              textDecoration='none'
+              fontWeight='bold'
+              color='primary.600'>
+              Login
+            </Text>
+          </Text>
+        </Stack>
       </Container>
-    </Flex>
+    </AuthLayout>
   );
 };
 

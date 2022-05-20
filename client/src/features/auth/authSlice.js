@@ -6,7 +6,7 @@ const getAuthFromLocalStorage = () => {
 };
 
 const initialState = {
-  isLogin: getAuthFromLocalStorage(),
+  isAuth: getAuthFromLocalStorage(),
   user: null,
   isLoading: false,
   isSuccess: false,
@@ -18,10 +18,10 @@ export const authSlice = createSlice({
   initialState,
   reducers: {
     authenticateUser: (state) => {
-      state.isLogin = true;
+      state.isAuth = true;
     },
     unauthenticateUser: (state) => {
-      state.isLogin = false;
+      state.isAuth = false;
     },
   },
 });

@@ -10,27 +10,26 @@ import {
   Heading,
   HStack,
   Input,
+  InputGroup,
+  InputLeftElement,
   Stack,
   Text,
 } from "@chakra-ui/react";
 import { BiAtom } from "react-icons/bi";
+import { RiMailLine, RiLock2Line, RiLoginCircleLine } from "react-icons/ri";
 import { NavLink } from "react-router-dom";
+import AuthLayout from "../../layouts/AuthLayout";
 
 const Login = () => {
   return (
-    <Flex
-      justify='center'
-      alignItems='center'
-      minH='100vh'
-      w='full'
-      bgGradient='radial(circle, rgba(97,208,252,1) 0%, rgba(26,112,147,1) 35%, rgba(3,80,111,1) 100%)'>
+    <AuthLayout>
       <Container
         as='main'
         maxW='sm'
         bg='white'
         borderRadius='lg'
         p={6}
-        boxShadow='lg'>
+        boxShadow='dark-lg'>
         <HStack>
           <BiAtom
             style={{
@@ -39,50 +38,81 @@ const Login = () => {
               fontWeight: "bolder",
             }}
           />
-          <Heading as='h1' color='#03506f'>
+          <Heading size='md' as='h1' color='#03506f'>
             Login
           </Heading>
         </HStack>
-
         <Divider my={4} />
-        <Stack spacing={6}>
+        <Stack as='form' spacing={6}>
           <Stack spacing={2}>
             <FormControl>
-              <FormLabel htmlFor='email'>Email address</FormLabel>
-              <Input id='email' type='email' />
+              <FormLabel htmlFor='email' fontSize='sm'>
+                Email address
+              </FormLabel>
+              <InputGroup>
+                <InputLeftElement
+                  pointerEvents='none'
+                  color='primary.600'
+                  fontSize='md'
+                  children={<RiMailLine />}
+                />
+                <Input id='email' type='email' />
+              </InputGroup>
               {/* <FormHelperText>We'll never share your email.</FormHelperText> */}
             </FormControl>
             <FormControl>
-              <FormLabel htmlFor='password'>Password</FormLabel>
-              <Input id='password' type='password' />
+              <FormLabel htmlFor='password' fontSize='sm'>
+                Password
+              </FormLabel>
+              <InputGroup>
+                <InputLeftElement
+                  pointerEvents='none'
+                  color='primary.600'
+                  fontSize='md'
+                  children={<RiLock2Line />}
+                />
+                <Input id='password' type='password' />
+              </InputGroup>
               {/* <FormHelperText>We'll never share your email.</FormHelperText> */}
             </FormControl>
           </Stack>
           <Flex justifyContent='space-between' alignItems='center'>
             <Checkbox size='md' colorScheme='primary'>
-              <Text>Remember Me</Text>
+              <Text as='span' fontSize='sm'>
+                Remember Me
+              </Text>
             </Checkbox>
-            <Text as={NavLink} to='/forgotPassword'>
+            <Text
+              as={NavLink}
+              to='/forgotPassword'
+              color='primary.600'
+              fontWeight='semibold'>
               Forgot Password?
             </Text>
           </Flex>
-          <Button w='fit-content'>Login</Button>
+          <Button
+            w={["full", "fit-content"]}
+            size='sm'
+            leftIcon={<RiLoginCircleLine />}>
+            Login
+          </Button>
         </Stack>
         <Divider my={4} />
         <Stack align='center'>
-          <Text
-            as={NavLink}
-            to='/register'
-            fontWeight='semibold'
-            textDecoration='none'>
+          <Text>
             Dont have an Account ?{" "}
-            <Text as='span' fontWeight='bold'>
+            <Text
+              as={NavLink}
+              to='/register'
+              textDecoration='none'
+              fontWeight='bold'
+              color='primary.600'>
               Register
             </Text>
           </Text>
         </Stack>
       </Container>
-    </Flex>
+    </AuthLayout>
   );
 };
 

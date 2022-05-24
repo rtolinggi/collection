@@ -9,6 +9,14 @@ const getAuthFromLocalStorage = () => {
   return false;
 };
 
+const initialState = {
+  isAuth: getAuthFromLocalStorage(),
+  entities: null,
+  isLoading: false,
+  isSuccess: false,
+  message: "",
+};
+
 export const signIn = createAsyncThunk(
   "auth/login",
   async (data, { rejectWithValue }) => {
@@ -35,14 +43,6 @@ export const getSession = createAsyncThunk(
   }
 );
 
-const initialState = {
-  isAuth: getAuthFromLocalStorage(),
-  entities: null,
-  isLoading: false,
-  isSuccess: false,
-  message: "",
-};
-
 export const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -53,7 +53,7 @@ export const authSlice = createSlice({
     },
     unauthenticateUser: (state) => {
       state.isAuth = false;
-      localStorage.removeItem("isAuth");
+      localStorage.setItem("isAuth", "false");
     },
   },
   extraReducers: (builder) => {

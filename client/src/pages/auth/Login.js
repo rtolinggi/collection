@@ -54,13 +54,6 @@ const Login = () => {
       console.log(error);
     }
   };
-  // function onSubmit(values) {
-  //   return new Promise((resolve) => {
-  //     const data = dispatch(signIn(values)).unwrap();
-  //     console.log(data);
-  //     resolve();
-  //   });
-  // }
 
   return (
     <AuthLayout>

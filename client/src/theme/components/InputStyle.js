@@ -2,10 +2,13 @@ const InputStyle = {
   variants: {
     filled: {
       field: {
+        h: "2.2rem",
+        borderWidth: "0.3px",
         borderRadius: "sm",
         _focus: {
-          borderWidth: "1.2px",
-          boxShadow: "md",
+          ring: "3px",
+          ringColor: "ring",
+          outline: "none",
         },
       },
     },

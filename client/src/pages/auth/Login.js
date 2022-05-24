@@ -5,13 +5,8 @@ import {
   Container,
   Divider,
   Flex,
-  FormControl,
-  FormLabel,
   Heading,
   HStack,
-  Input,
-  InputGroup,
-  InputLeftElement,
   Stack,
   Text,
 } from "@chakra-ui/react";
@@ -19,8 +14,37 @@ import { BiAtom } from "react-icons/bi";
 import { RiMailLine, RiLock2Line, RiLoginCircleLine } from "react-icons/ri";
 import { NavLink } from "react-router-dom";
 import AuthLayout from "../../layouts/AuthLayout";
+import { useForm } from "react-hook-form";
+import InputCostum from "../../components/InputCostum";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+
+const schema = yup
+  .object({
+    email: yup.string().email().required(),
+    password: yup.string().min(6).required(),
+  })
+  .required();
 
 const Login = () => {
+  const {
+    handleSubmit,
+    register,
+    watch,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
+
+  function onSubmit(values) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        console.log(values);
+        resolve();
+      }, 3000);
+    });
+  }
+  console.log(watch("email"));
   return (
     <AuthLayout>
       <Container
@@ -43,38 +67,23 @@ const Login = () => {
           </Heading>
         </HStack>
         <Divider my={4} />
-        <Stack as='form' spacing={6}>
+        <Stack as='form' onSubmit={handleSubmit(onSubmit)} spacing={6}>
           <Stack spacing={2}>
-            <FormControl>
-              <FormLabel htmlFor='email' fontSize='sm'>
-                Email address
-              </FormLabel>
-              <InputGroup>
-                <InputLeftElement
-                  pointerEvents='none'
-                  color='primary.600'
-                  fontSize='md'
-                  children={<RiMailLine />}
-                />
-                <Input id='email' type='email' />
-              </InputGroup>
-              {/* <FormHelperText>We'll never share your email.</FormHelperText> */}
-            </FormControl>
-            <FormControl>
-              <FormLabel htmlFor='password' fontSize='sm'>
-                Password
-              </FormLabel>
-              <InputGroup>
-                <InputLeftElement
-                  pointerEvents='none'
-                  color='primary.600'
-                  fontSize='md'
-                  children={<RiLock2Line />}
-                />
-                <Input id='password' type='password' />
-              </InputGroup>
-              {/* <FormHelperText>We'll never share your email.</FormHelperText> */}
-            </FormControl>
+            <InputCostum
+              name='email'
+              title='Email'
+              InputLeftIcon={<RiMailLine />}
+              register={register}
+              errorMessage={errors?.email?.message}
+            />
+            <InputCostum
+              name='password'
+              title='Password'
+              type='password'
+              InputLeftIcon={<RiLock2Line />}
+              register={register}
+              errorMessage={errors?.password?.message}
+            />
           </Stack>
           <Flex justifyContent='space-between' alignItems='center'>
             <Checkbox size='md' colorScheme='primary'>
@@ -92,6 +101,9 @@ const Login = () => {
           </Flex>
           <Button
             w={["full", "fit-content"]}
+            // onClick={increment}
+            isLoading={isSubmitting}
+            type='submit'
             size='sm'
             leftIcon={<RiLoginCircleLine />}>
             Login

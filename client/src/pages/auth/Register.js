@@ -15,12 +15,14 @@ import {
   RiUser3Line,
   RiUserAddLine,
 } from "react-icons/ri";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import AuthLayout from "../../layouts/AuthLayout";
 import { useForm } from "react-hook-form";
 import InputCostum from "../../components/InputCostum";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import { useDispatch, useSelector } from "react-redux";
+import { signUp } from "../../features/auth/authSlice";
 
 const schema = yup
   .object({
@@ -36,32 +38,40 @@ const schema = yup
   .required();
 
 const Register = () => {
+  const { isLoading } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const {
     handleSubmit,
     register,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
   });
 
-  function onSubmit(values) {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        console.log(values);
-        resolve();
-      }, 3000);
-    });
-  }
+  const onSubmit = async (values) => {
+    try {
+      console.log(values);
+      const response = await dispatch(signUp(values)).unwrap();
+      if (response.success) {
+        return navigate("/");
+      }
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <AuthLayout>
       <Container
-        as='main'
-        maxW='sm'
-        bg='white'
-        borderRadius='lg'
+        as="main"
+        maxW="sm"
+        bg="white"
+        borderRadius="lg"
         p={6}
-        boxShadow='dark-lg'>
+        boxShadow="dark-lg"
+      >
         <HStack>
           <BiAtom
             style={{
@@ -70,40 +80,40 @@ const Register = () => {
               fontWeight: "bolder",
             }}
           />
-          <Heading size='md' as='h1' color='#03506f'>
+          <Heading size="md" as="h1" color="#03506f">
             Register
           </Heading>
         </HStack>
 
         <Divider my={4} />
-        <Stack as='form' onSubmit={handleSubmit(onSubmit)} spacing={6}>
+        <Stack as="form" onSubmit={handleSubmit(onSubmit)} spacing={6}>
           <Stack spacing={2}>
             <InputCostum
-              name='username'
-              title='Username'
+              name="username"
+              title="Username"
               InputLeftIcon={<RiUser3Line />}
               register={register}
               errorMessage={errors?.username?.message}
             />
             <InputCostum
-              name='email'
-              title='Email'
+              name="email"
+              title="Email"
               InputLeftIcon={<RiMailLine />}
               register={register}
               errorMessage={errors?.email?.message}
             />
             <InputCostum
-              name='password'
-              title='Password'
-              type='password'
+              name="password"
+              title="Password"
+              type="password"
               InputLeftIcon={<RiLock2Line />}
               register={register}
               errorMessage={errors?.password?.message}
             />
             <InputCostum
-              name='repeatPassword'
-              title='Repeat   Password'
-              type='password'
+              name="repeatPassword"
+              title="Repeat Password"
+              type="password"
               InputLeftIcon={<RiLock2Line />}
               register={register}
               errorMessage={errors?.repeatPassword?.message}
@@ -111,23 +121,25 @@ const Register = () => {
           </Stack>
           <Button
             w={["full", "fit-content"]}
-            size='sm'
-            type='submit'
-            isLoading={isSubmitting}
-            leftIcon={<RiUserAddLine />}>
+            size="sm"
+            type="submit"
+            isLoading={isLoading}
+            leftIcon={<RiUserAddLine />}
+          >
             Register
           </Button>
         </Stack>
         <Divider my={4} />
-        <Stack align='center'>
+        <Stack align="center">
           <Text>
             Do You have an Account ?{" "}
             <Text
               as={NavLink}
-              to='/login'
-              textDecoration='none'
-              fontWeight='bold'
-              color='primary.600'>
+              to="/login"
+              textDecoration="none"
+              fontWeight="bold"
+              color="primary.600"
+            >
               Login
             </Text>
           </Text>

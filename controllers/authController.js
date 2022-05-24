@@ -91,15 +91,15 @@ const login = async (req, res, next) => {
 
 // Register Controller
 const register = async (req, res, next) => {
-  const { username, email, password, password_confirmation } = req.body;
+  const { username, email, password, repeatPassword } = req.body;
 
   // validasi input user
-  if (!username || !email || !password || !password_confirmation) {
+  if (!username || !email || !password || !repeatPassword) {
     return next(new ErrorResponse("All field Is Required", 400));
   }
 
   //validasi password confirmation
-  if (password !== password_confirmation) {
+  if (password !== repeatPassword) {
     return next(new ErrorResponse("Password Not Match", 400));
   }
 

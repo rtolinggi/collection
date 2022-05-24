@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { _getSession, _signIn } from "../../services/authService";
+import { _getSession, _signIn, _signUp } from "../../services/authService";
 
 const getAuthFromLocalStorage = () => {
   const isAuth = JSON.parse(localStorage.getItem("isAuth"));
@@ -16,6 +16,19 @@ const initialState = {
   isSuccess: false,
   message: "",
 };
+
+export const signUp = createAsyncThunk(
+  "auth/register",
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await _signUp(data);
+      return response;
+    } catch (error) {
+      console.log(error);
+      return rejectWithValue(error);
+    }
+  }
+);
 
 export const signIn = createAsyncThunk(
   "auth/login",
@@ -73,7 +86,23 @@ export const authSlice = createSlice({
         state.message = payload;
       });
 
-    // session
+    // Register
+    builder
+      .addCase(signUp.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(signUp.fulfilled, (state, { payload }) => {
+        state.isLoading = false;
+        state.isSuccess = payload.success ? true : false;
+        state.entities = payload;
+      })
+      .addCase(signUp.rejected, (state, { payload }) => {
+        state.isLoading = false;
+        state.isSuccess = false;
+        state.message = payload;
+      });
+
+    // Session
     builder
       .addCase(getSession.pending, (state) => {
         state.isLoading = true;

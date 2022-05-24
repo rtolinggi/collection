@@ -102,7 +102,7 @@ const Register = () => {
             />
             <InputCostum
               name='repeatPassword'
-              title='Repeat Password'
+              title='Repeat   Password'
               type='password'
               InputLeftIcon={<RiLock2Line />}
               register={register}

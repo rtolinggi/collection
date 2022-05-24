@@ -12,12 +12,14 @@ import {
 } from "@chakra-ui/react";
 import { BiAtom } from "react-icons/bi";
 import { RiMailLine, RiLock2Line, RiLoginCircleLine } from "react-icons/ri";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import AuthLayout from "../../layouts/AuthLayout";
+import { useSelector, useDispatch } from "react-redux";
 import { useForm } from "react-hook-form";
 import InputCostum from "../../components/InputCostum";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import { authenticateUser, signIn } from "../../features/auth/authSlice";
 
 const schema = yup
   .object({
@@ -27,24 +29,39 @@ const schema = yup
   .required();
 
 const Login = () => {
+  const { isLoading } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const {
     handleSubmit,
     register,
-    watch,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
   });
 
-  function onSubmit(values) {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        console.log(values);
-        resolve();
-      }, 3000);
-    });
-  }
-  console.log(watch("email"));
+  const onSubmit = async (values) => {
+    try {
+      const response = await dispatch(signIn(values)).unwrap();
+      if (response.success) {
+        dispatch(authenticateUser());
+        navigate("/admin");
+        return;
+      }
+      return console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  // function onSubmit(values) {
+  //   return new Promise((resolve) => {
+  //     const data = dispatch(signIn(values)).unwrap();
+  //     console.log(data);
+  //     resolve();
+  //   });
+  // }
+
   return (
     <AuthLayout>
       <Container
@@ -102,7 +119,7 @@ const Login = () => {
           <Button
             w={["full", "fit-content"]}
             // onClick={increment}
-            isLoading={isSubmitting}
+            isLoading={isLoading}
             type='submit'
             size='sm'
             leftIcon={<RiLoginCircleLine />}>

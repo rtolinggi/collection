@@ -9,6 +9,7 @@ import {
   HStack,
   Stack,
   Text,
+  useToast,
 } from "@chakra-ui/react";
 import { BiAtom } from "react-icons/bi";
 import { RiMailLine, RiLock2Line, RiLoginCircleLine } from "react-icons/ri";
@@ -20,6 +21,7 @@ import InputCostum from "../../components/InputCostum";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { authenticateUser, signIn } from "../../features/auth/authSlice";
+import toastCostum from "../../components/toastCostum";
 
 const schema = yup
   .object({
@@ -32,7 +34,7 @@ const Login = () => {
   const { isLoading } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
+  const toast = useToast();
   const {
     handleSubmit,
     register,
@@ -49,21 +51,22 @@ const Login = () => {
         navigate("/admin");
         return;
       }
-      return console.log(response);
+      return toast(toastCostum("Login Failed", response.message, "error"));
     } catch (error) {
-      console.log(error);
+      return toast(toastCostum("Login Failed", error.message, "error"));
     }
   };
 
   return (
     <AuthLayout>
       <Container
-        as='main'
-        maxW='sm'
-        bg='white'
-        borderRadius='lg'
+        as="main"
+        maxW="sm"
+        bg="white"
+        borderRadius="lg"
         p={6}
-        boxShadow='dark-lg'>
+        boxShadow="dark-lg"
+      >
         <HStack>
           <BiAtom
             style={{
@@ -72,40 +75,41 @@ const Login = () => {
               fontWeight: "bolder",
             }}
           />
-          <Heading size='md' as='h1' color='#03506f'>
+          <Heading size="md" as="h1" color="#03506f">
             Login
           </Heading>
         </HStack>
         <Divider my={4} />
-        <Stack as='form' onSubmit={handleSubmit(onSubmit)} spacing={6}>
+        <Stack as="form" onSubmit={handleSubmit(onSubmit)} spacing={6}>
           <Stack spacing={2}>
             <InputCostum
-              name='email'
-              title='Email'
+              name="email"
+              title="Email"
               InputLeftIcon={<RiMailLine />}
               register={register}
               errorMessage={errors?.email?.message}
             />
             <InputCostum
-              name='password'
-              title='Password'
-              type='password'
+              name="password"
+              title="Password"
+              type="password"
               InputLeftIcon={<RiLock2Line />}
               register={register}
               errorMessage={errors?.password?.message}
             />
           </Stack>
-          <Flex justifyContent='space-between' alignItems='center'>
-            <Checkbox size='md' colorScheme='primary'>
-              <Text as='span' fontSize='sm'>
+          <Flex justifyContent="space-between" alignItems="center">
+            <Checkbox size="md" colorScheme="primary">
+              <Text as="span" fontSize="sm">
                 Remember Me
               </Text>
             </Checkbox>
             <Text
               as={NavLink}
-              to='/forgotPassword'
-              color='primary.600'
-              fontWeight='semibold'>
+              to="/forgotPassword"
+              color="primary.600"
+              fontWeight="semibold"
+            >
               Forgot Password?
             </Text>
           </Flex>
@@ -113,22 +117,24 @@ const Login = () => {
             w={["full", "fit-content"]}
             // onClick={increment}
             isLoading={isLoading}
-            type='submit'
-            size='sm'
-            leftIcon={<RiLoginCircleLine />}>
+            type="submit"
+            size="sm"
+            leftIcon={<RiLoginCircleLine />}
+          >
             Login
           </Button>
         </Stack>
         <Divider my={4} />
-        <Stack align='center'>
+        <Stack align="center">
           <Text>
             Dont have an Account ?{" "}
             <Text
               as={NavLink}
-              to='/register'
-              textDecoration='none'
-              fontWeight='bold'
-              color='primary.600'>
+              to="/register"
+              textDecoration="none"
+              fontWeight="bold"
+              color="primary.600"
+            >
               Register
             </Text>
           </Text>

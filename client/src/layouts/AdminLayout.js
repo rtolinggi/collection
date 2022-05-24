@@ -1,5 +1,7 @@
+import { Flex } from "@chakra-ui/react";
+
 const AdminLayout = ({ children }) => {
-  return <div>{children}</div>;
+  return <Flex direction="column">{children}</Flex>;
 };
 
 export default AdminLayout;

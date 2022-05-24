@@ -7,6 +7,7 @@ import {
   HStack,
   Stack,
   Text,
+  useToast,
 } from "@chakra-ui/react";
 import { BiAtom } from "react-icons/bi";
 import {
@@ -23,6 +24,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { signUp } from "../../features/auth/authSlice";
+import toastCostum from "../../components/toastCostum";
 
 const schema = yup
   .object({
@@ -41,6 +43,7 @@ const Register = () => {
   const { isLoading } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const toast = useToast();
   const {
     handleSubmit,
     register,
@@ -54,11 +57,18 @@ const Register = () => {
       console.log(values);
       const response = await dispatch(signUp(values)).unwrap();
       if (response.success) {
+        toast(
+          toastCostum(
+            "Registration Successfully",
+            "Please Check your email to Activation Account",
+            "success"
+          )
+        );
         return navigate("/");
       }
-      console.log(response);
+      toast(toastCostum("Registration Failed", response.message, "error"));
     } catch (error) {
-      console.log(error);
+      toast(toastCostum("Registration Failed", error, "error"));
     }
   };
 

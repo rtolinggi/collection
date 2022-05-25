@@ -1,11 +1,12 @@
-import Header from "../../components/Header";
+import { Heading } from "@chakra-ui/react";
 import AdminLayout from "../../layouts/AdminLayout";
 
 const Dashboard = () => {
   return (
     <AdminLayout>
-      <Header />
-      <h1>Dashboard Page</h1>
+      <Heading size='sm' fontFamily='body'>
+        Dashboard Page
+      </Heading>
     </AdminLayout>
   );
 };

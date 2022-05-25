@@ -1,5 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { _getSession, _signIn, _signUp } from "../../services/authService";
+import {
+  _getSession,
+  _signIn,
+  _signOut,
+  _signUp,
+} from "../../services/authService";
 
 const getAuthFromLocalStorage = () => {
   const isAuth = JSON.parse(localStorage.getItem("isAuth"));
@@ -48,6 +53,19 @@ export const getSession = createAsyncThunk(
   async (data, { rejectWithValue }) => {
     try {
       const response = await _getSession(data);
+      return response;
+    } catch (error) {
+      console.log(error);
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const signOut = createAsyncThunk(
+  "auth/logout",
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await _signOut(data);
       return response;
     } catch (error) {
       console.log(error);
@@ -114,6 +132,22 @@ export const authSlice = createSlice({
         state.entities = payload;
       })
       .addCase(getSession.rejected, (state, { payload }) => {
+        state.isLoading = false;
+        state.isSuccess = false;
+        state.message = payload;
+      });
+
+    // Logout
+    builder
+      .addCase(signOut.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(signOut.fulfilled, (state, { payload }) => {
+        state.isLoading = false;
+        state.isSuccess = payload.success ? true : false;
+        state.entities = payload;
+      })
+      .addCase(signOut.rejected, (state, { payload }) => {
         state.isLoading = false;
         state.isSuccess = false;
         state.message = payload;

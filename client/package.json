@@ -6,6 +6,7 @@
     "@chakra-ui/react": "^2.0.0",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
+    "@fontsource/orbitron": "^4.5.8",
     "@hookform/resolvers": "^2.8.10",
     "@reduxjs/toolkit": "^1.8.1",
     "@testing-library/jest-dom": "^5.16.4",

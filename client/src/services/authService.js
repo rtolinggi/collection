@@ -37,4 +37,14 @@ const _getSession = async (data) => {
   }
 };
 
-export { _signIn, _signUp, _getSession };
+const _signOut = async (data) => {
+  try {
+    const response = await axiosAuth.delete("logout", data);
+    const result = response.data;
+    return result;
+  } catch (error) {
+    return error.response.data;
+  }
+};
+
+export { _signIn, _signUp, _getSession, _signOut };

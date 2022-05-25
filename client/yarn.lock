@@ -1837,6 +1837,11 @@
     minimatch "^3.1.2"
     strip-json-comments "^3.1.1"
 
+"@fontsource/orbitron@^4.5.8":
+  version "4.5.8"
+  resolved "https://registry.yarnpkg.com/@fontsource/orbitron/-/orbitron-4.5.8.tgz#1304125a8c0ece6b65f29107f320ff7fcdc83424"
+  integrity sha512-En4xVwdVf3g3Rf6fuCWCdgIG9X6k1lW8rb5dZmgYv2WVwWofc14eoaRF551uOoHaWBsxHaF7o5mqY5EmnJaKbA==
+
 "@hookform/resolvers@^2.8.10":
   version "2.8.10"
   resolved "https://registry.yarnpkg.com/@hookform/resolvers/-/resolvers-2.8.10.tgz#b66d7a7848b1b1dd5b976a73fff36bb366666e7d"

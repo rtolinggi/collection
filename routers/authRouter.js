@@ -13,7 +13,7 @@ const authRoute = express.Router();
 
 authRoute.post("/login", login);
 authRoute.post("/register", register);
-authRoute.delete("/logout", protect, logout);
+authRoute.delete("/logout", logout);
 authRoute.get("/:id/verify/:token", verifyEmail);
 authRoute.get("/login", session);
 authRoute.get("/token", protect, getToken);

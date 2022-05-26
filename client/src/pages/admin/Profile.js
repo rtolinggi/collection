@@ -1,6 +1,6 @@
 import { Box, Heading } from "@chakra-ui/react";
 
-const Dashboard = () => {
+const Profile = () => {
   return (
     <>
       <Box
@@ -13,11 +13,11 @@ const Dashboard = () => {
         my={2}
       >
         <Heading size="sm" fontFamily="body">
-          Dashboard Page
+          Profil Page
         </Heading>
       </Box>
     </>
   );
 };
 
-export default Dashboard;
+export default Profile;

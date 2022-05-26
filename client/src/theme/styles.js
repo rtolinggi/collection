@@ -6,7 +6,7 @@ const globalStyle = {
       fontFamily: "body",
       fontSize: "sm",
       color: mode("gray.800", "whiteAlpha.900")(props),
-      bg: mode("white", "gray.800")(props),
+      bg: mode("#eff6ff", "gray.800")(props),
       lineHeight: "base",
     },
     "*::placeholder": {

@@ -1,6 +1,7 @@
 import { Outlet, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { Spinner, Flex } from "@chakra-ui/react";
 import {
   authenticateUser,
   getSession,
@@ -8,7 +9,7 @@ import {
 } from "../features/auth/authSlice";
 
 const LoginSession = () => {
-  const { isLoading } = useSelector((state) => state.auth);
+  const { isLoading, isAuth } = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   useEffect(() => {
@@ -26,11 +27,27 @@ const LoginSession = () => {
       }
     };
     cekSessionLogin();
-    // !isAuth && cekSessionLogin();
+    !isAuth && cekSessionLogin();
     // eslint-disable-next-line
   }, []);
 
-  return <>{isLoading ? <p>Loading...</p> : <Outlet />}</>;
+  return (
+    <>
+      {isLoading ? (
+        <Flex align="center" justify="center" w="100%" h="100vh">
+          <Spinner
+            thickness="4px"
+            speed="0.65s"
+            emptyColor="gray.200"
+            color="primary.600"
+            size="xl"
+          />
+        </Flex>
+      ) : (
+        <Outlet />
+      )}
+    </>
+  );
 };
 
 export default LoginSession;

@@ -250,7 +250,7 @@ const session = async (req, res, next) => {
   // validation token in database
   let user;
   try {
-    user = prisma.user.findFirst({
+    user = await prisma.user.findFirst({
       where: {
         refreshToken,
       },
@@ -270,7 +270,12 @@ const session = async (req, res, next) => {
       if (err) {
         return next(new ErrorResponse("Token Not Valid", 401));
       }
-      return res.status(200).json({ isLogin: true, decoded });
+      return res.status(200).json({
+        isLogin: true,
+        username: user.username,
+        email: user.email,
+        decoded,
+      });
     }
   );
 };
@@ -287,7 +292,7 @@ const getToken = async (req, res, next) => {
   // validation token in database
   let user;
   try {
-    user = prisma.user.findFirst({
+    user = await prisma.user.findFirst({
       where: {
         refreshToken,
       },

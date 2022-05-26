@@ -13,8 +13,10 @@ import {
 import avatarProfile from "../../assets/images/avatar.jpg";
 import { RiDashboardLine, RiProfileLine } from "react-icons/ri";
 import { NavLink } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const SideBar = () => {
+  const { entities } = useSelector((state) => state.auth);
   let activeStyle = {
     color: "#00A3C4",
     borderRightWidth: "3px",
@@ -41,9 +43,9 @@ const SideBar = () => {
         >
           <VStack>
             <Heading size="xs" color="primary.600">
-              rtolinggi
+              {entities?.username}
             </Heading>
-            <Text>rtolinggi91@gmail.com</Text>
+            <Text>{entities?.email}</Text>
           </VStack>
           <Avatar src={avatarProfile} pos="absolute" bottom={-8} size="lg" />
         </Center>

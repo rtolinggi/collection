@@ -22,11 +22,12 @@ import {
 import { IoMenuOutline } from "react-icons/io5";
 import { MdNotificationsNone } from "react-icons/md";
 import { BiAtom } from "react-icons/bi";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { signOut, unauthenticateUser } from "../features/auth/authSlice";
 
 const Header = ({ showSidebar }) => {
+  const { entities } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleLogout = async () => {
@@ -171,7 +172,7 @@ const Header = ({ showSidebar }) => {
                 bg="transparent"
               >
                 <Avatar bg="primary.500" size="xs" mr={2} />
-                rtolinggi
+                {entities?.username}
               </MenuButton>
               <MenuList fontSize="sm">
                 <MenuItem

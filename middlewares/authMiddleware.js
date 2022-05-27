@@ -36,7 +36,6 @@ const protect = async (req, res, next) => {
     } catch (error) {
       return next(new ErrorResponse());
     }
-    console.log(req.user);
     next();
   }
   if (!token) {

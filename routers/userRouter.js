@@ -9,6 +9,6 @@ import {
 const userRoute = express.Router();
 
 userRoute.route("/").get(getUser).post(storeUser);
-userRoute.route("/:id").put(updateUser).delete(deleteUser);
+userRoute.route("/:id").put(updateUser).delete(deleteUser).get(getUser);
 
 export default userRoute;

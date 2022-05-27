@@ -1,20 +1,22 @@
-import { Box, Heading } from "@chakra-ui/react";
+import { Box, Heading, Text } from "@chakra-ui/react";
 
 const Dashboard = () => {
   return (
     <>
+      <Heading size='md' color='gray.700'>
+        Dashboard
+      </Heading>
       <Box
-        as="main"
-        backgroundColor="white"
-        w="100%"
+        as='main'
+        backgroundColor='white'
+        w='100%'
         p={4}
-        rounded="md"
-        boxShadow="lg"
-        my={2}
-      >
-        <Heading size="sm" fontFamily="body">
-          Dashboard Page
-        </Heading>
+        rounded='md'
+        boxShadow='lg'
+        my={2}>
+        <Text fontWeight='semibold' size='lg'>
+          Contet
+        </Text>
       </Box>
     </>
   );

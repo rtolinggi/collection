@@ -272,8 +272,8 @@ const session = async (req, res, next) => {
       }
       return res.status(200).json({
         isLogin: true,
-        username: user.username,
-        email: user.email,
+        username: user?.username,
+        email: user?.email,
         decoded,
       });
     }

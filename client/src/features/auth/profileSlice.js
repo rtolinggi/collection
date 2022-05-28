@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { _getProfile } from "../../services/profileService";
 
 const initialState = {
-  data: null,
+  dataProfile: null,
   isLoading: false,
   isSuccess: false,
   message: "",
@@ -31,13 +31,13 @@ const profileSlice = createSlice({
       .addCase(getProfile.fulfilled, (state, { payload }) => {
         state.isLoading = false;
         state.isSuccess = payload.success ? true : false;
-        state.data = payload;
+        state.dataProfile = payload;
       })
       .addCase(getProfile.rejected, (state, { payload }) => {
         state.isLoading = false;
         state.isSuccess = payload.success ? true : false;
         state.message = payload;
-        state.data = null;
+        state.dataProfile = null;
       });
   },
 });

@@ -75,13 +75,12 @@ const Register = () => {
   return (
     <AuthLayout>
       <Container
-        as="main"
-        maxW="sm"
-        bg="white"
-        borderRadius="lg"
+        as='main'
+        maxW='sm'
+        bg='white'
+        borderRadius='lg'
         p={6}
-        boxShadow="dark-lg"
-      >
+        boxShadow='dark-lg'>
         <HStack>
           <BiAtom
             style={{
@@ -90,40 +89,40 @@ const Register = () => {
               fontWeight: "bolder",
             }}
           />
-          <Heading size="md" as="h1" color="#03506f">
+          <Heading size='md' as='h1' color='#03506f'>
             Register
           </Heading>
         </HStack>
 
         <Divider my={4} />
-        <Stack as="form" onSubmit={handleSubmit(onSubmit)} spacing={6}>
+        <Stack as='form' onSubmit={handleSubmit(onSubmit)} spacing={6}>
           <Stack spacing={2}>
             <InputCostum
-              name="username"
-              title="Username"
+              name='username'
+              title='Full Name'
               InputLeftIcon={<RiUser3Line />}
               register={register}
               errorMessage={errors?.username?.message}
             />
             <InputCostum
-              name="email"
-              title="Email"
+              name='email'
+              title='Email'
               InputLeftIcon={<RiMailLine />}
               register={register}
               errorMessage={errors?.email?.message}
             />
             <InputCostum
-              name="password"
-              title="Password"
-              type="password"
+              name='password'
+              title='Password'
+              type='password'
               InputLeftIcon={<RiLock2Line />}
               register={register}
               errorMessage={errors?.password?.message}
             />
             <InputCostum
-              name="repeatPassword"
-              title="Repeat Password"
-              type="password"
+              name='repeatPassword'
+              title='Repeat Password'
+              type='password'
               InputLeftIcon={<RiLock2Line />}
               register={register}
               errorMessage={errors?.repeatPassword?.message}
@@ -131,25 +130,23 @@ const Register = () => {
           </Stack>
           <Button
             w={["full", "fit-content"]}
-            size="sm"
-            type="submit"
+            size='sm'
+            type='submit'
             isLoading={isLoading}
-            leftIcon={<RiUserAddLine />}
-          >
+            leftIcon={<RiUserAddLine />}>
             Register
           </Button>
         </Stack>
         <Divider my={4} />
-        <Stack align="center">
+        <Stack align='center'>
           <Text>
             Do You have an Account ?{" "}
             <Text
               as={NavLink}
-              to="/login"
-              textDecoration="none"
-              fontWeight="bold"
-              color="primary.600"
-            >
+              to='/login'
+              textDecoration='none'
+              fontWeight='bold'
+              color='primary.600'>
               Login
             </Text>
           </Text>
